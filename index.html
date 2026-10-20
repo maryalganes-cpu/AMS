@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Accounting System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>Simple Accounting System</h1>
+
+  <div class="menu">
+    <button onclick="showPage('accounts')">Chart of Accounts</button>
+    <button onclick="showPage('transactions')">Business Transactions</button>
+    <button onclick="showPage('trial')">Trial Balance</button>
+    <button onclick="showPage('adjustments')">Adjustments</button>
+    <button onclick="clearAll()">Clear All Data</button>
+  </div>
+
+  <!-- 1. CHART OF ACCOUNTS -->
+  <div id="accounts" class="page">
+    <h2>Chart of Accounts</h2>
+    <input id="accCode" type="number" placeholder="Code">
+    <input id="accName" type="text" placeholder="Account name">
+    <select id="accType">
+      <option>Asset</option>
+      <option>Liability</option>
+      <option>Equity</option>
+      <option>Revenue</option>
+      <option>Expense</option>
+    </select>
+    <button onclick="addAccount()">Add Account</button>
+    <table id="accountTable"></table>
+  </div>
+
+  <!-- 2. BUSINESS TRANSACTIONS -->
+  <div id="transactions" class="page">
+    <h2>Business Transactions</h2>
+    <p>Date: <input id="tDate" type="date"></p>
+    <p>Description: <input id="tDesc" type="text"></p>
+    <p>Debit account: <select id="tDebit"></select></p>
+    <p>Credit account: <select id="tCredit"></select></p>
+    <p>Amount: <input id="tAmount" type="number"></p>
+    <button onclick="addEntry('transaction')">Add Transaction</button>
+    <table id="transactionTable"></table>
+  </div>
+
+  <!-- 3. TRIAL BALANCE -->
+  <div id="trial" class="page">
+    <h2>Trial Balance</h2>
+    <table id="trialTable"></table>
+    <p id="trialMessage"></p>
+  </div>
+
+  <!-- 4. ADJUSTMENTS -->
+  <div id="adjustments" class="page">
+    <h2>Adjustments</h2>
+    <p>Date: <input id="aDate" type="date"></p>
+    <p>Description: <input id="aDesc" type="text"></p>
+    <p>Debit account: <select id="aDebit"></select></p>
+    <p>Credit account: <select id="aCredit"></select></p>
+    <p>Amount: <input id="aAmount" type="number"></p>
+    <button onclick="addEntry('adjustment')">Add Adjustment</button>
+    <table id="adjustmentTable"></table>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+</html>
