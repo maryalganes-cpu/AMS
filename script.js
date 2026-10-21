@@ -2,7 +2,7 @@
 
 // 1. PUT YOUR OWN SUPABASE DETAILS HERE
 var SUPABASE_URL = "https://tzrbwnxfnltzsbvsxumz.supabase.co";
-var SUPABASE_KEY = "sb_publishable_ryV8utzh43evlDaUH7cALA__Bz_9h4n";
+var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6cmJ3bnhmbmx0enNidnN4dW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTY4ODcsImV4cCI6MjEwODA5Mjg4N30.JMiENJccqeYeqZQ-_MuuJz4gIjtQgonfUbKzyG7z950";
 
 // The Supabase client (named db because "supabase" is used by the library)
 var db = null;
