@@ -6,14 +6,17 @@
 </head>
 <body>
 
-  <h1>Simple Accounting System</h1>
+  <h1>Accounting System</h1>
 
   <div class="menu">
     <button onclick="showPage('accounts')">Chart of Accounts</button>
     <button onclick="showPage('transactions')">Business Transactions</button>
     <button onclick="showPage('trial')">Trial Balance</button>
     <button onclick="showPage('adjustments')">Adjustments</button>
-    <button onclick="clearAll()">Clear All Data</button>
+    <button onclick="showPage('adjusted')">Adjusted Trial Balance</button>
+    <button onclick="showPage('income')">Income Statement</button>
+    <button onclick="showPage('equity')">Owner's Equity</button>
+    <button onclick="clearAll()" style="background-color: rgb(133, 8, 8);">Clear All Data</button>
   </div>
 
   <!-- 1. CHART OF ACCOUNTS -->
@@ -61,6 +64,25 @@
     <p>Amount: <input id="aAmount" type="number"></p>
     <button onclick="addEntry('adjustment')">Add Adjustment</button>
     <table id="adjustmentTable"></table>
+  </div>
+
+  <!-- 5. ADJUSTED TRIAL BALANCE -->
+  <div id="adjusted" class="page">
+    <h2>Adjusted Trial Balance</h2>
+    <table id="adjustedTable"></table>
+    <p id="adjustedMessage"></p>
+  </div>
+
+  <!-- 6. INCOME STATEMENT -->
+  <div id="income" class="page">
+    <h2>Income Statement</h2>
+    <table id="incomeTable"></table>
+  </div>
+
+  <!-- 7. STATEMENT OF OWNER'S EQUITY -->
+  <div id="equity" class="page">
+    <h2>Statement of Owner's Equity</h2>
+    <table id="equityTable"></table>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

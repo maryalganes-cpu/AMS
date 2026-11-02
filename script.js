@@ -2,7 +2,7 @@
 
 // 1. PUT YOUR OWN SUPABASE DETAILS HERE
 var SUPABASE_URL = "https://tzrbwnxfnltzsbvsxumz.supabase.co";
-var SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6cmJ3bnhmbmx0enNidnN4dW16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI1MTY4ODcsImV4cCI6MjEwODA5Mjg4N30.JMiENJccqeYeqZQ-_MuuJz4gIjtQgonfUbKzyG7z950";
+var SUPABASE_KEY = "sb_publishable_ryV8utzh43evlDaUH7cALA__Bz_9h4n";
 
 // The Supabase client (named db because "supabase" is used by the library)
 var db = null;
@@ -11,7 +11,7 @@ if (SUPABASE_URL.indexOf("YOUR-PROJECT") != -1 || SUPABASE_KEY.indexOf("YOUR-PUB
 } else {
   db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
-
+ 
 // Returns false (and shows a message) if Supabase is not connected
 function dbReady() {
   if (db == null) {
@@ -20,12 +20,12 @@ function dbReady() {
   }
   return true;
 }
-
+ 
 // These lists are filled from the database when the page opens
 var accounts = [];
 var entries = [];
 // Each entry looks like: { id, kind, date, desc, debit, credit, amount }
-
+ 
 // Get all accounts and entries from Supabase
 async function loadData() {
   if (!dbReady()) { return; }
@@ -35,13 +35,13 @@ async function loadData() {
     return;
   }
   accounts = result.data;
-
+ 
   result = await db.from("entries").select("*").order("id");
   if (result.error) {
     alert("Could not load entries: " + result.error.message);
     return;
   }
-
+ 
   entries = [];
   for (var i = 0; i < result.data.length; i++) {
     var r = result.data[i];
@@ -55,10 +55,10 @@ async function loadData() {
       amount: Number(r.amount)
     });
   }
-
+ 
   refresh();
 }
-
+ 
 // Show one page and hide the others
 function showPage(id) {
   var pages = document.getElementsByClassName("page");
@@ -66,12 +66,21 @@ function showPage(id) {
     pages[i].style.display = "none";
   }
   document.getElementById(id).style.display = "block";
-
+ 
   if (id == "trial") {
     showTrialBalance();
   }
+  if (id == "adjusted") {
+    showAdjustedTrialBalance();
+  }
+  if (id == "income") {
+    showIncomeStatement();
+  }
+  if (id == "equity") {
+    showEquityStatement();
+  }
 }
-
+ 
 // Get the name of an account using its code
 function getAccountName(code) {
   for (var i = 0; i < accounts.length; i++) {
@@ -81,20 +90,20 @@ function getAccountName(code) {
   }
   return code;
 }
-
+ 
 // ===== CHART OF ACCOUNTS =====
-
+ 
 async function addAccount() {
   if (!dbReady()) { return; }
   var code = document.getElementById("accCode").value;
   var name = document.getElementById("accName").value;
   var type = document.getElementById("accType").value;
-
+ 
   if (code == "" || name == "") {
     alert("Please enter a code and a name.");
     return;
   }
-
+ 
   // make sure the code is not used already
   for (var i = 0; i < accounts.length; i++) {
     if (accounts[i].code == code) {
@@ -102,7 +111,7 @@ async function addAccount() {
       return;
     }
   }
-
+ 
   var result = await db.from("accounts").insert({
     code: Number(code),
     name: name,
@@ -112,16 +121,16 @@ async function addAccount() {
     alert("Error: " + result.error.message);
     return;
   }
-
+ 
   document.getElementById("accCode").value = "";
   document.getElementById("accName").value = "";
   await loadData();
 }
-
+ 
 async function deleteAccount(index) {
   if (!dbReady()) { return; }
   var code = accounts[index].code;
-
+ 
   // do not delete an account that is already used
   for (var i = 0; i < entries.length; i++) {
     if (entries[i].debit == code || entries[i].credit == code) {
@@ -129,7 +138,7 @@ async function deleteAccount(index) {
       return;
     }
   }
-
+ 
   var result = await db.from("accounts").delete().eq("code", code);
   if (result.error) {
     alert("Error: " + result.error.message);
@@ -137,7 +146,7 @@ async function deleteAccount(index) {
   }
   await loadData();
 }
-
+ 
 function showAccounts() {
   var html = "<tr><th>Code</th><th>Account Name</th><th>Type</th><th></th></tr>";
   for (var i = 0; i < accounts.length; i++) {
@@ -150,7 +159,7 @@ function showAccounts() {
   }
   document.getElementById("accountTable").innerHTML = html;
 }
-
+ 
 // Fill the debit/credit dropdown lists with the accounts
 function fillDropdowns() {
   var ids = ["tDebit", "tCredit", "aDebit", "aCredit"];
@@ -162,9 +171,9 @@ function fillDropdowns() {
     document.getElementById(ids[j]).innerHTML = options;
   }
 }
-
+ 
 // ===== TRANSACTIONS AND ADJUSTMENTS =====
-
+ 
 // kind is either "transaction" or "adjustment"
 async function addEntry(kind) {
   if (!dbReady()) { return; }
@@ -172,13 +181,13 @@ async function addEntry(kind) {
   if (kind == "adjustment") {
     p = "a";
   }
-
+ 
   var date = document.getElementById(p + "Date").value;
   var desc = document.getElementById(p + "Desc").value;
   var debit = document.getElementById(p + "Debit").value;
   var credit = document.getElementById(p + "Credit").value;
   var amount = parseFloat(document.getElementById(p + "Amount").value);
-
+ 
   if (date == "" || desc == "") {
     alert("Please enter a date and a description.");
     return;
@@ -191,7 +200,7 @@ async function addEntry(kind) {
     alert("Debit and credit must be different accounts.");
     return;
   }
-
+ 
   var result = await db.from("entries").insert({
     kind: kind,
     date: date,
@@ -204,12 +213,12 @@ async function addEntry(kind) {
     alert("Error: " + result.error.message);
     return;
   }
-
+ 
   document.getElementById(p + "Desc").value = "";
   document.getElementById(p + "Amount").value = "";
   await loadData();
 }
-
+ 
 async function deleteEntry(index) {
   if (!dbReady()) { return; }
   var result = await db.from("entries").delete().eq("id", entries[index].id);
@@ -219,13 +228,13 @@ async function deleteEntry(index) {
   }
   await loadData();
 }
-
+ 
 function showEntries() {
   var kinds = ["transaction", "adjustment"];
-
+ 
   for (var k = 0; k < kinds.length; k++) {
     var html = "<tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th><th>Amount</th><th></th></tr>";
-
+ 
     for (var i = 0; i < entries.length; i++) {
       var e = entries[i];
       if (e.kind == kinds[k]) {
@@ -239,13 +248,13 @@ function showEntries() {
         html += "</tr>";
       }
     }
-
+ 
     document.getElementById(kinds[k] + "Table").innerHTML = html;
   }
 }
-
+ 
 // ===== TRIAL BALANCE =====
-
+ 
 // Add up the debits and subtract the credits for one account.
 // kind can be "transaction", "adjustment" or "all"
 function getBalance(code, kind) {
@@ -264,43 +273,43 @@ function getBalance(code, kind) {
   }
   return Math.round(total * 100) / 100;
 }
-
+ 
 // A positive balance goes in the debit column, a negative one in the credit column
 function debitPart(balance) {
   if (balance > 0) { return balance; }
   return 0;
 }
-
+ 
 function creditPart(balance) {
   if (balance < 0) { return -balance; }
   return 0;
 }
-
+ 
 // Show a number, or nothing if it is zero
 function show(n) {
   if (n == 0) { return ""; }
   return n.toFixed(2);
 }
-
+ 
 function showTrialBalance() {
   var html = "<tr><th rowspan='2'>Account</th><th colspan='2'>Unadjusted</th><th colspan='2'>Adjustments</th><th colspan='2'>Adjusted</th></tr>";
   html += "<tr><th>Debit</th><th>Credit</th><th>Debit</th><th>Credit</th><th>Debit</th><th>Credit</th></tr>";
-
+ 
   var totals = [0, 0, 0, 0, 0, 0];
-
+ 
   for (var i = 0; i < accounts.length; i++) {
     var code = accounts[i].code;
     var unadj = getBalance(code, "transaction");
     var adj = getBalance(code, "adjustment");
     var adjusted = Math.round((unadj + adj) * 100) / 100;
-
+ 
     // skip accounts that have no activity
     if (unadj == 0 && adj == 0) {
       continue;
     }
-
+ 
     var row = [debitPart(unadj), creditPart(unadj), debitPart(adj), creditPart(adj), debitPart(adjusted), creditPart(adjusted)];
-
+ 
     html += "<tr><td>" + accounts[i].name + "</td>";
     for (var j = 0; j < 6; j++) {
       html += "<td>" + show(row[j]) + "</td>";
@@ -308,16 +317,16 @@ function showTrialBalance() {
     }
     html += "</tr>";
   }
-
+ 
   html += "<tr class='total'><td>TOTAL</td>";
   for (var k = 0; k < 6; k++) {
     totals[k] = Math.round(totals[k] * 100) / 100;
     html += "<td>" + totals[k].toFixed(2) + "</td>";
   }
   html += "</tr>";
-
+ 
   document.getElementById("trialTable").innerHTML = html;
-
+ 
   var message = document.getElementById("trialMessage");
   if (totals[0] == totals[1] && totals[2] == totals[3] && totals[4] == totals[5]) {
     message.innerHTML = "The trial balance is balanced.";
@@ -325,9 +334,142 @@ function showTrialBalance() {
     message.innerHTML = "The trial balance is NOT balanced. Please check your entries.";
   }
 }
-
+ 
+// ===== ADJUSTED TRIAL BALANCE =====
+ 
+function showAdjustedTrialBalance() {
+  var html = "<tr><th>Account</th><th>Debit</th><th>Credit</th></tr>";
+  var totalDebit = 0;
+  var totalCredit = 0;
+ 
+  for (var i = 0; i < accounts.length; i++) {
+    var balance = getBalance(accounts[i].code, "all");
+ 
+    // skip accounts that have no activity
+    if (balance == 0) {
+      continue;
+    }
+ 
+    var d = debitPart(balance);
+    var c = creditPart(balance);
+    totalDebit = totalDebit + d;
+    totalCredit = totalCredit + c;
+ 
+    html += "<tr><td>" + accounts[i].name + "</td><td>" + show(d) + "</td><td>" + show(c) + "</td></tr>";
+  }
+ 
+  totalDebit = Math.round(totalDebit * 100) / 100;
+  totalCredit = Math.round(totalCredit * 100) / 100;
+  html += "<tr class='total'><td>TOTAL</td><td>" + totalDebit.toFixed(2) + "</td><td>" + totalCredit.toFixed(2) + "</td></tr>";
+ 
+  document.getElementById("adjustedTable").innerHTML = html;
+ 
+  var message = document.getElementById("adjustedMessage");
+  if (totalDebit == totalCredit) {
+    message.innerHTML = "The adjusted trial balance is balanced.";
+  } else {
+    message.innerHTML = "The adjusted trial balance is NOT balanced. Please check your entries.";
+  }
+}
+ 
+// ===== INCOME STATEMENT =====
+ 
+// Revenue minus expenses (uses the adjusted balances)
+function getNetIncome() {
+  var revenue = 0;
+  var expenses = 0;
+  for (var i = 0; i < accounts.length; i++) {
+    var balance = getBalance(accounts[i].code, "all");
+    if (accounts[i].type == "Revenue") {
+      revenue = revenue - balance;
+    }
+    if (accounts[i].type == "Expense") {
+      expenses = expenses + balance;
+    }
+  }
+  return Math.round((revenue - expenses) * 100) / 100;
+}
+ 
+function showIncomeStatement() {
+  var html = "<tr><th>Account</th><th>Amount</th></tr>";
+  var totalRevenue = 0;
+  var totalExpenses = 0;
+ 
+  // Revenue
+  html += "<tr class='total'><td>Revenue</td><td></td></tr>";
+  for (var i = 0; i < accounts.length; i++) {
+    if (accounts[i].type == "Revenue") {
+      var amount = -getBalance(accounts[i].code, "all");
+      if (amount != 0) {
+        html += "<tr><td>" + accounts[i].name + "</td><td>" + amount.toFixed(2) + "</td></tr>";
+        totalRevenue = totalRevenue + amount;
+      }
+    }
+  }
+  totalRevenue = Math.round(totalRevenue * 100) / 100;
+  html += "<tr class='total'><td>Total Revenue</td><td>" + totalRevenue.toFixed(2) + "</td></tr>";
+ 
+  // Expenses
+  html += "<tr class='total'><td>Expenses</td><td></td></tr>";
+  for (var j = 0; j < accounts.length; j++) {
+    if (accounts[j].type == "Expense") {
+      var expense = getBalance(accounts[j].code, "all");
+      if (expense != 0) {
+        html += "<tr><td>" + accounts[j].name + "</td><td>" + expense.toFixed(2) + "</td></tr>";
+        totalExpenses = totalExpenses + expense;
+      }
+    }
+  }
+  totalExpenses = Math.round(totalExpenses * 100) / 100;
+  html += "<tr class='total'><td>Total Expenses</td><td>" + totalExpenses.toFixed(2) + "</td></tr>";
+ 
+  // Net income or net loss
+  var netIncome = getNetIncome();
+  if (netIncome >= 0) {
+    html += "<tr class='total'><td>NET INCOME</td><td>" + netIncome.toFixed(2) + "</td></tr>";
+  } else {
+    html += "<tr class='total'><td>NET LOSS</td><td>" + (-netIncome).toFixed(2) + "</td></tr>";
+  }
+ 
+  document.getElementById("incomeTable").innerHTML = html;
+}
+ 
+// ===== STATEMENT OF OWNER'S EQUITY =====
+ 
+function showEquityStatement() {
+  var capital = 0;
+  var drawings = 0;
+ 
+  // Look at the Equity accounts. Accounts with "drawing" in the name are drawings.
+  for (var i = 0; i < accounts.length; i++) {
+    if (accounts[i].type == "Equity") {
+      var balance = getBalance(accounts[i].code, "all");
+      if (accounts[i].name.toLowerCase().indexOf("drawing") != -1) {
+        drawings = drawings + balance;
+      } else {
+        capital = capital - balance;
+      }
+    }
+  }
+ 
+  var netIncome = getNetIncome();
+  var ending = Math.round((capital + netIncome - drawings) * 100) / 100;
+ 
+  var html = "<tr><th>Description</th><th>Amount</th></tr>";
+  html += "<tr><td>Owner's Capital</td><td>" + capital.toFixed(2) + "</td></tr>";
+  if (netIncome >= 0) {
+    html += "<tr><td>Add: Net Income</td><td>" + netIncome.toFixed(2) + "</td></tr>";
+  } else {
+    html += "<tr><td>Less: Net Loss</td><td>" + (-netIncome).toFixed(2) + "</td></tr>";
+  }
+  html += "<tr><td>Less: Owner's Drawings</td><td>" + drawings.toFixed(2) + "</td></tr>";
+  html += "<tr class='total'><td>ENDING OWNER'S CAPITAL</td><td>" + ending.toFixed(2) + "</td></tr>";
+ 
+  document.getElementById("equityTable").innerHTML = html;
+}
+ 
 // ===== EXTRA BUTTONS =====
-
+ 
 async function clearAll() {
   if (!dbReady()) { return; }
   if (confirm("Delete all entries?")) {
@@ -339,14 +481,14 @@ async function clearAll() {
     await loadData();
   }
 }
-
+ 
 // Update everything on the screen
 function refresh() {
   fillDropdowns();
   showAccounts();
   showEntries();
 }
-
+ 
 // When the page opens
 document.getElementById("tDate").value = new Date().toISOString().slice(0, 10);
 document.getElementById("aDate").value = new Date().toISOString().slice(0, 10);
