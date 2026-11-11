@@ -468,19 +468,6 @@ function showEquityStatement() {
   document.getElementById("equityTable").innerHTML = html;
 }
  
-// ===== EXTRA BUTTONS =====
- 
-async function clearAll() {
-  if (!dbReady()) { return; }
-  if (confirm("Delete all entries?")) {
-    var result = await db.from("entries").delete().neq("id", 0);
-    if (result.error) {
-      alert("Error: " + result.error.message);
-      return;
-    }
-    await loadData();
-  }
-}
  
 // Update everything on the screen
 function refresh() {
