@@ -79,6 +79,12 @@ function showPage(id) {
   if (id == "equity") {
     showEquityStatement();
   }
+  if (id == "position") {
+    showFinancialPosition();
+  }
+  if (id == "cashflow") {
+    showCashFlow();
+  }
 }
  
 // Get the name of an account using its code
@@ -469,6 +475,207 @@ function showEquityStatement() {
 }
  
  
+// ===== STATEMENT OF FINANCIAL POSITION =====
+
+// Show a number. Negative numbers go in brackets, like (100.00)
+function money(n) {
+  n = Math.round(n * 100) / 100;
+  if (n < 0) {
+    return "(" + (-n).toFixed(2) + ")";
+  }
+  return n.toFixed(2);
+}
+
+function showFinancialPosition() {
+  var html = "<tr><th>Account</th><th>Amount</th></tr>";
+
+  // Assets
+  var totalAssets = 0;
+  html += "<tr class='total'><td>ASSETS</td><td></td></tr>";
+  for (var i = 0; i < accounts.length; i++) {
+    if (accounts[i].type == "Asset") {
+      var assetBalance = getBalance(accounts[i].code, "all");
+      if (assetBalance != 0) {
+        html += "<tr><td>" + accounts[i].name + "</td><td>" + money(assetBalance) + "</td></tr>";
+        totalAssets = totalAssets + assetBalance;
+      }
+    }
+  }
+  totalAssets = Math.round(totalAssets * 100) / 100;
+  html += "<tr class='total'><td>TOTAL ASSETS</td><td>" + money(totalAssets) + "</td></tr>";
+
+  // Liabilities
+  var totalLiabilities = 0;
+  html += "<tr class='total'><td>LIABILITIES</td><td></td></tr>";
+  for (var j = 0; j < accounts.length; j++) {
+    if (accounts[j].type == "Liability") {
+      var liabilityAmount = -getBalance(accounts[j].code, "all");
+      if (liabilityAmount != 0) {
+        html += "<tr><td>" + accounts[j].name + "</td><td>" + money(liabilityAmount) + "</td></tr>";
+        totalLiabilities = totalLiabilities + liabilityAmount;
+      }
+    }
+  }
+  totalLiabilities = Math.round(totalLiabilities * 100) / 100;
+  html += "<tr class='total'><td>TOTAL LIABILITIES</td><td>" + money(totalLiabilities) + "</td></tr>";
+
+  // Owner's equity (same idea as the Statement of Owner's Equity)
+  var capital = 0;
+  var drawings = 0;
+  for (var k = 0; k < accounts.length; k++) {
+    if (accounts[k].type == "Equity") {
+      var equityBalance = getBalance(accounts[k].code, "all");
+      if (accounts[k].name.toLowerCase().indexOf("drawing") != -1) {
+        drawings = drawings + equityBalance;
+      } else {
+        capital = capital - equityBalance;
+      }
+    }
+  }
+  var netIncome = getNetIncome();
+  var totalEquity = Math.round((capital + netIncome - drawings) * 100) / 100;
+
+  html += "<tr class='total'><td>OWNER'S EQUITY</td><td></td></tr>";
+  html += "<tr><td>Owner's Capital</td><td>" + money(capital) + "</td></tr>";
+  if (netIncome >= 0) {
+    html += "<tr><td>Add: Net Income</td><td>" + money(netIncome) + "</td></tr>";
+  } else {
+    html += "<tr><td>Less: Net Loss</td><td>" + money(-netIncome) + "</td></tr>";
+  }
+  html += "<tr><td>Less: Owner's Drawings</td><td>" + money(drawings) + "</td></tr>";
+  html += "<tr class='total'><td>TOTAL OWNER'S EQUITY</td><td>" + money(totalEquity) + "</td></tr>";
+
+  var totalBoth = Math.round((totalLiabilities + totalEquity) * 100) / 100;
+  html += "<tr class='total'><td>TOTAL LIABILITIES AND OWNER'S EQUITY</td><td>" + money(totalBoth) + "</td></tr>";
+
+  document.getElementById("positionTable").innerHTML = html;
+
+  var message = document.getElementById("positionMessage");
+  if (totalAssets == totalBoth) {
+    message.innerHTML = "Assets = Liabilities + Owner's Equity. The statement is balanced.";
+  } else {
+    message.innerHTML = "The statement is NOT balanced. Please check your entries.";
+  }
+}
+
+// ===== STATEMENT OF CASH FLOWS =====
+
+// Find an account using its code
+function findAccount(code) {
+  for (var i = 0; i < accounts.length; i++) {
+    if (accounts[i].code == code) {
+      return accounts[i];
+    }
+  }
+  return null;
+}
+
+// A cash account is an Asset with "cash" in its name
+function isCashAccount(account) {
+  return account.type == "Asset" && account.name.toLowerCase().indexOf("cash") != -1;
+}
+
+// Check if a name contains any of the words in a list
+function nameHas(name, words) {
+  for (var i = 0; i < words.length; i++) {
+    if (name.indexOf(words[i]) != -1) {
+      return true;
+    }
+  }
+  return false;
+}
+
+// Look at the OTHER account in a cash entry and decide the activity type
+function getCashCategory(account) {
+  var name = account.name.toLowerCase();
+
+  if (account.type == "Equity") {
+    return "Financing";
+  }
+  if (account.type == "Liability") {
+    if (nameHas(name, ["loan", "note", "mortgage", "bond"])) {
+      return "Financing";
+    }
+    return "Operating";
+  }
+  if (account.type == "Asset") {
+    if (nameHas(name, ["equipment", "building", "land", "vehicle", "furniture", "property", "machinery"])) {
+      return "Investing";
+    }
+    return "Operating";
+  }
+  return "Operating";   // Revenue and Expense accounts
+}
+
+function showCashFlow() {
+  var categories = ["Operating", "Investing", "Financing"];
+  var html = "<tr><th>Description</th><th>Amount</th></tr>";
+  var netCash = 0;
+
+  for (var c = 0; c < categories.length; c++) {
+    var category = categories[c];
+    var total = 0;
+    html += "<tr class='total'><td>Cash Flows from " + category + " Activities</td><td></td></tr>";
+
+    for (var i = 0; i < entries.length; i++) {
+      var e = entries[i];
+      var debitAccount = findAccount(e.debit);
+      var creditAccount = findAccount(e.credit);
+      if (debitAccount == null || creditAccount == null) {
+        continue;
+      }
+
+      var amount = 0;
+      var other = null;
+
+      if (isCashAccount(debitAccount) && !isCashAccount(creditAccount)) {
+        amount = e.amount;      // cash received
+        other = creditAccount;
+      }
+      if (isCashAccount(creditAccount) && !isCashAccount(debitAccount)) {
+        amount = -e.amount;     // cash paid out
+        other = debitAccount;
+      }
+
+      // skip entries that do not involve cash or belong to another activity
+      if (other == null || getCashCategory(other) != category) {
+        continue;
+      }
+
+      html += "<tr><td>" + e.desc + "</td><td>" + money(amount) + "</td></tr>";
+      total = total + amount;
+    }
+
+    total = Math.round(total * 100) / 100;
+    html += "<tr class='total'><td>Net Cash from " + category + " Activities</td><td>" + money(total) + "</td></tr>";
+    netCash = netCash + total;
+  }
+
+  netCash = Math.round(netCash * 100) / 100;
+  html += "<tr class='total'><td>NET INCREASE (DECREASE) IN CASH</td><td>" + money(netCash) + "</td></tr>";
+  html += "<tr><td>Cash at the beginning</td><td>0.00</td></tr>";
+  html += "<tr class='total'><td>CASH AT THE END</td><td>" + money(netCash) + "</td></tr>";
+
+  document.getElementById("cashTable").innerHTML = html;
+
+  // Compare with the real cash balance
+  var cashBalance = 0;
+  for (var j = 0; j < accounts.length; j++) {
+    if (isCashAccount(accounts[j])) {
+      cashBalance = cashBalance + getBalance(accounts[j].code, "all");
+    }
+  }
+  cashBalance = Math.round(cashBalance * 100) / 100;
+
+  var message = document.getElementById("cashMessage");
+  if (cashBalance == netCash) {
+    message.innerHTML = "The ending cash matches the Cash account balance.";
+  } else {
+    message.innerHTML = "The ending cash does NOT match the Cash account balance (" + money(cashBalance) + "). Please check your entries.";
+  }
+}
+
+
 // Update everything on the screen
 function refresh() {
   fillDropdowns();

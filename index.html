@@ -16,6 +16,8 @@
     <button onclick="showPage('adjusted')">Adjusted Trial Balance</button>
     <button onclick="showPage('income')">Income Statement</button>
     <button onclick="showPage('equity')">Owner's Equity</button>
+    <button onclick="showPage('position')">Statement of Financial Position</button>
+    <button onclick="showPage('cashflow')">Statement of Cash Flows</button>
   </div>
 
   <!-- 1. CHART OF ACCOUNTS -->
@@ -82,6 +84,20 @@
   <div id="equity" class="page">
     <h2>Statement of Owner's Equity</h2>
     <table id="equityTable"></table>
+  </div>
+
+  <!-- 8. STATEMENT OF FINANCIAL POSITION -->
+  <div id="position" class="page">
+    <h2>Statement of Financial Position</h2>
+    <table id="positionTable"></table>
+    <p id="positionMessage"></p>
+  </div>
+
+  <!-- 9. STATEMENT OF CASH FLOWS -->
+  <div id="cashflow" class="page">
+    <h2>Statement of Cash Flows</h2>
+    <table id="cashTable"></table>
+    <p id="cashMessage"></p>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
