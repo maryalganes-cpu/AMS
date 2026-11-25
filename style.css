@@ -1,59 +1,188 @@
+/* ===== Basic page ===== */
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-  background-color: #f2f2f2;
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  background-color: #f5f6f8;
+  color: #222222;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px 16px 48px 16px;
 }
 
 h1 {
-  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
 }
 
+h2 {
+  font-size: 18px;
+  margin-top: 0;
+}
+
+/* ===== Menu ===== */
 .menu {
-  text-align: center;
-  margin-bottom: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 18px;
 }
 
-button {
+.menubtn {
+  background-color: #ffffff;
+  color: #444444;
+  border: 1px solid #d9dce1;
+  border-radius: 6px;
   padding: 8px 12px;
-  margin: 3px;
-  background-color: #2e6da4;
-  color: white;
-  border: none;
+  margin: 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.menubtn:hover {
+  background-color: #eef1f5;
+}
+
+.menubtn.active,
+.menubtn.active:hover {
+  background-color: #2f4f73;
+  border-color: #2f4f73;
+  color: #ffffff;
+}
+
+/* ===== Page boxes ===== */
+.page {
+  display: none;
+  background-color: #ffffff;
+  border: 1px solid #e1e4e8;
+  border-radius: 8px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.page p {
+  margin: 10px 0;
+}
+
+/* ===== Buttons ===== */
+button {
+  background-color: #2f4f73;
+  color: #ffffff;
+  border: 1px solid #2f4f73;
+  border-radius: 6px;
+  padding: 8px 14px;
+  margin: 3px 3px 3px 0;
+  font-size: 14px;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #1d4f7c;
+  background-color: #243d5a;
 }
 
-.page {
-  display: none;
-  background-color: white;
-  padding: 15px;
-  border: 1px solid #999;
+button.secondary {
+  background-color: #ffffff;
+  color: #2f4f73;
+  border: 1px solid #c5ccd6;
 }
 
+button.secondary:hover {
+  background-color: #eef1f5;
+}
+
+button.danger {
+  background-color: #ffffff;
+  color: #b3382c;
+  border: 1px solid #e3b9b4;
+}
+
+button.danger:hover {
+  background-color: #fcefed;
+}
+
+button.small {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+/* ===== Forms ===== */
 input, select {
-  padding: 5px;
-  margin: 3px;
+  font-family: inherit;
+  font-size: 14px;
+  padding: 7px 9px;
+  margin: 3px 3px 3px 0;
+  min-width: 240px;
+  border: 1px solid #c9ced6;
+  border-radius: 4px;
+  background-color: #ffffff;
 }
 
+input:focus, select:focus {
+  outline: none;
+  border-color: #2f4f73;
+}
+
+input:disabled {
+  background-color: #eeeeee;
+  color: #777777;
+}
+
+#accCode {
+  min-width: 0;
+  width: 100px;
+}
+
+#accName {
+  min-width: 0;
+  width: 240px;
+}
+
+#accType {
+  min-width: 140px;
+}
+
+.notice {
+  color: #8a5a00;
+  font-size: 13px;
+}
+
+/* ===== Tables ===== */
 table {
   width: 100%;
-  margin-top: 15px;
+  margin-top: 18px;
   border-collapse: collapse;
+  font-size: 14px;
 }
 
 th, td {
-  border: 1px solid #999;
-  padding: 6px;
+  padding: 9px 10px;
   text-align: left;
+  border-bottom: 1px solid #e8eaee;
 }
 
 th {
-  background-color: #dddddd;
+  background-color: #f0f2f5;
+  border: 1px solid #dde0e5;
+  color: #555555;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.total {
-  font-weight: bold;
+.total td {
+  font-weight: 600;
+  background-color: #f7f8fa;
+}
+
+p[id$="Message"] {
+  color: #555555;
+  font-size: 14px;
+  margin-top: 14px;
 }

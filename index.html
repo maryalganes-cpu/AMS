@@ -5,19 +5,20 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="container">
 
   <h1>Accounting System</h1>
 
   <div class="menu">
-    <button onclick="showPage('accounts')">Chart of Accounts</button>
-    <button onclick="showPage('transactions')">Business Transactions</button>
-    <button onclick="showPage('trial')">Trial Balance</button>
-    <button onclick="showPage('adjustments')">Adjustments</button>
-    <button onclick="showPage('adjusted')">Adjusted Trial Balance</button>
-    <button onclick="showPage('income')">Income Statement</button>
-    <button onclick="showPage('equity')">Owner's Equity</button>
-    <button onclick="showPage('position')">Statement of Financial Position</button>
-    <button onclick="showPage('cashflow')">Statement of Cash Flows</button>
+    <button class="menubtn" id="menu-accounts" onclick="showPage('accounts')">Chart of Accounts</button>
+    <button class="menubtn" id="menu-transactions" onclick="showPage('transactions')">Business Transactions</button>
+    <button class="menubtn" id="menu-trial" onclick="showPage('trial')">Trial Balance</button>
+    <button class="menubtn" id="menu-adjustments" onclick="showPage('adjustments')">Adjustments</button>
+    <button class="menubtn" id="menu-adjusted" onclick="showPage('adjusted')">Adjusted Trial Balance</button>
+    <button class="menubtn" id="menu-income" onclick="showPage('income')">Income Statement</button>
+    <button class="menubtn" id="menu-equity" onclick="showPage('equity')">Owner's Equity</button>
+    <button class="menubtn" id="menu-position" onclick="showPage('position')">Statement of Financial Position</button>
+    <button class="menubtn" id="menu-cashflow" onclick="showPage('cashflow')">Statement of Cash Flows</button>
   </div>
 
   <!-- 1. CHART OF ACCOUNTS -->
@@ -32,7 +33,9 @@
       <option>Revenue</option>
       <option>Expense</option>
     </select>
-    <button onclick="addAccount()">Add Account</button>
+    <button id="accSaveBtn" onclick="addAccount()">Add Account</button>
+    <button id="accCancelBtn" class="secondary" style="display:none" onclick="cancelAccountEdit()">Cancel</button>
+    <p id="accNotice" class="notice"></p>
     <table id="accountTable"></table>
   </div>
 
@@ -44,7 +47,9 @@
     <p>Debit account: <select id="tDebit"></select></p>
     <p>Credit account: <select id="tCredit"></select></p>
     <p>Amount: <input id="tAmount" type="number"></p>
-    <button onclick="addEntry('transaction')">Add Transaction</button>
+    <button id="tSaveBtn" onclick="addEntry('transaction')">Add Transaction</button>
+    <button id="tCancelBtn" class="secondary" style="display:none" onclick="cancelEntryEdit('transaction')">Cancel</button>
+    <p id="tNotice" class="notice"></p>
     <table id="transactionTable"></table>
   </div>
 
@@ -63,7 +68,9 @@
     <p>Debit account: <select id="aDebit"></select></p>
     <p>Credit account: <select id="aCredit"></select></p>
     <p>Amount: <input id="aAmount" type="number"></p>
-    <button onclick="addEntry('adjustment')">Add Adjustment</button>
+    <button id="aSaveBtn" onclick="addEntry('adjustment')">Add Adjustment</button>
+    <button id="aCancelBtn" class="secondary" style="display:none" onclick="cancelEntryEdit('adjustment')">Cancel</button>
+    <p id="aNotice" class="notice"></p>
     <table id="adjustmentTable"></table>
   </div>
 
@@ -99,6 +106,8 @@
     <table id="cashTable"></table>
     <p id="cashMessage"></p>
   </div>
+
+</div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
