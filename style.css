@@ -4,42 +4,42 @@
 }
 
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
   margin: 0;
-  background-color: #1C2541;
-  color: #E6EAF4;
+  background-color: #ffffff;
+  color: #222222;
 }
 
 h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #FFFFFF;
-  margin: 0 0 22px 6px;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 18px 0;
 }
 
 h2 {
   font-size: 22px;
-  color: #FFFFFF;
-  margin: 0 0 6px 0;
+  margin: 0 0 12px 0;
 }
 
 h3 {
-  font-size: 15px;
-  color: #C9D3EE;
-  margin: 22px 0 8px 0;
+  font-size: 16px;
+  margin: 24px 0 8px 0;
 }
 
-/* ===== Layout: sidebar on the left, content on the right ===== */
+/* ===== Layout ===== */
 .layout {
   display: flex;
   min-height: 100vh;
 }
 
 .sidebar {
-  width: 250px;
+  width: 240px;
   flex-shrink: 0;
-  background-color: #141B33;
-  padding: 26px 14px;
+  background-color: #f3f3f3;
+  border-right: 1px solid #d0d0d0;
+  padding: 20px 14px;
   position: sticky;
   top: 0;
   height: 100vh;
@@ -50,48 +50,42 @@ h3 {
   flex: 1;
   min-width: 0;
   max-width: 1100px;
-  padding: 28px 32px 48px 32px;
+  padding: 24px 32px 48px 32px;
 }
 
 /* ===== Menu ===== */
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .menubtn {
-  background-color: transparent;
-  color: #AEB8D6;
+  background: none;
+  color: #222222;
   border: none;
-  border-left: 3px solid transparent;
-  border-radius: 4px;
-  padding: 10px 12px;
+  border-radius: 0;
+  padding: 8px 10px;
   margin: 0;
   font-size: 14px;
+  font-weight: normal;
   text-align: left;
   cursor: pointer;
 }
 
 .menubtn:hover {
-  background-color: #1F2947;
-  color: #FFFFFF;
+  background-color: #e4e4e4;
 }
 
 .menubtn.active,
 .menubtn.active:hover {
-  background-color: #243056;
-  border-left-color: #5BC0BE;
-  color: #FFFFFF;
+  background-color: #dcdcdc;
+  font-weight: bold;
 }
 
-/* ===== Page boxes ===== */
+/* ===== Pages ===== */
 .page {
   display: none;
-  background-color: #243056;
-  border: 1px solid #34426E;
-  border-radius: 10px;
-  padding: 24px;
   overflow-x: auto;
 }
 
@@ -101,68 +95,67 @@ h3 {
 
 /* ===== Buttons ===== */
 button {
-  background-color: #5BC0BE;
-  color: #0B132B;
-  border: 1px solid #5BC0BE;
-  border-radius: 6px;
-  padding: 8px 14px;
+  background-color: #2f5d8a;
+  color: #ffffff;
+  border: 1px solid #2f5d8a;
+  border-radius: 3px;
+  padding: 6px 12px;
   margin: 3px 3px 3px 0;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 12px;
+  font-family: inherit;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #7AD3D1;
+  background-color: #244a70;
 }
 
 button.secondary {
-  background-color: transparent;
-  color: #D5DCF0;
-  border: 1px solid #4A5C8F;
+  background-color: #ffffff;
+  color: #222222;
+  border: 1px solid #999999;
 }
 
 button.secondary:hover {
-  background-color: #2E3C69;
+  background-color: #eeeeee;
 }
 
 button.danger {
-  background-color: transparent;
-  color: #FF8A80;
-  border: 1px solid #8F4B57;
+  background-color: #ffffff;
+  color: #b00020;
+  border: 1px solid #b00020;
 }
 
 button.danger:hover {
-  background-color: #3A2B47;
+  background-color: #fbeaec;
 }
 
 button.small {
-  padding: 4px 10px;
+  padding: 3px 8px;
   font-size: 13px;
-  font-weight: normal;
 }
 
 /* ===== Forms ===== */
 input, select {
   font-family: inherit;
   font-size: 14px;
-  color: #E6EAF4;
-  padding: 7px 9px;
+  color: #222222;
+  padding: 6px 8px;
   margin: 3px 3px 3px 0;
   min-width: 240px;
-  border: 1px solid #3F4F80;
-  border-radius: 4px;
-  background-color: #1C2541;
+  border: 1px solid #999999;
+  border-radius: 3px;
+  background-color: #ffffff;
 }
 
 input:focus, select:focus {
-  outline: none;
-  border-color: #5BC0BE;
+  outline: 2px solid #2f5d8a;
+  outline-offset: 0;
 }
 
 input:disabled {
-  background-color: #2A3358;
-  color: #8793B5;
+  background-color: #eeeeee;
+  color: #777777;
 }
 
 #accCode {
@@ -180,46 +173,33 @@ input:disabled {
 }
 
 .notice {
-  color: #F4C26B;
-  font-size: 13px;
+  color: #8a5a00;
 }
 
 /* ===== Tables ===== */
 table {
   width: 100%;
-  margin-top: 18px;
+  margin-top: 16px;
   border-collapse: collapse;
-  font-size: 14px;
 }
 
 th, td {
-  padding: 9px 10px;
+  padding: 7px 10px;
   text-align: left;
-  border-bottom: 1px solid #34426E;
+  border: 1px solid #d0d0d0;
 }
 
 th {
-  background-color: #2E3C69;
-  border: 1px solid #3A4A7A;
-  color: #B8C4E4;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-tr:hover td {
-  background-color: #2A3865;
+  background-color: #f3f3f3;
+  font-weight: bold;
 }
 
 .total td {
-  font-weight: 600;
-  color: #FFFFFF;
-  background-color: #2C3A66;
+  font-weight: bold;
+  background-color: #f3f3f3;
 }
 
 p[id$="Message"] {
-  color: #AEB8D6;
-  font-size: 14px;
   margin-top: 14px;
 }
 
@@ -227,73 +207,64 @@ p[id$="Message"] {
 .cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 14px;
-  margin: 18px 0;
+  gap: 12px;
+  margin: 16px 0;
 }
 
 .card {
-  background-color: #2D3B69;
-  border-radius: 8px;
-  border-top: 3px solid #5BC0BE;
-  padding: 16px;
+  border: 1px solid #d0d0d0;
+  border-top: 1px solid #d0d0d0;
+  padding: 12px;
 }
 
 .cardlabel {
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: #9AA6C4;
+  color: #555555;
 }
 
 .cardvalue {
-  font-size: 24px;
-  font-weight: 600;
-  color: #FFFFFF;
-  margin-top: 6px;
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 4px;
 }
 
 .cardsub {
-  font-size: 12px;
-  color: #9AA6C4;
-  margin-top: 4px;
+  color: #555555;
+  font-size: 13px;
+  margin-top: 2px;
 }
 
 .panels {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 12px;
 }
 
 .panel {
-  background-color: #2D3B69;
-  border-radius: 8px;
-  padding: 4px 18px 14px 18px;
+  border: 1px solid #d0d0d0;
+  padding: 0 14px 12px 14px;
 }
 
 .barrow {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 12px 0;
-  font-size: 14px;
+  margin: 10px 0;
 }
 
 .barlabel {
   width: 105px;
-  color: #C9D3EE;
 }
 
 .bartrack {
   flex: 1;
-  height: 14px;
-  background-color: #1C2541;
-  border-radius: 7px;
-  overflow: hidden;
+  height: 12px;
+  background-color: #eeeeee;
 }
 
+/* script.js sets a different colour on each bar; keep them all one plain colour */
 .bar {
   height: 100%;
-  border-radius: 7px;
+  background-color: #2f5d8a !important;
 }
 
 .barvalue {
@@ -302,18 +273,15 @@ p[id$="Message"] {
 }
 
 .barnote {
-  color: #9AA6C4;
-  font-size: 13px;
+  color: #555555;
 }
 
 .status-ok {
-  color: #6FCF97;
-  font-size: 13px;
+  color: #1a7f37;
 }
 
 .status-bad {
-  color: #FF8A80;
-  font-size: 13px;
+  color: #b00020;
 }
 
 /* ===== Small screens ===== */
@@ -325,7 +293,9 @@ p[id$="Message"] {
     width: 100%;
     height: auto;
     position: static;
-    padding: 16px;
+    border-right: none;
+    border-bottom: 1px solid #d0d0d0;
+    padding: 14px;
   }
   .menu {
     flex-direction: row;
