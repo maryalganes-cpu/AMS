@@ -100,6 +100,9 @@ function showPage(id) {
   if (id == "cashflow") {
     showCashFlow();
   }
+  if (id == "dashboard") {
+    showDashboard();
+  }
 }
 
 // Get the name of an account using its code
@@ -798,15 +801,165 @@ function showCashFlow() {
 }
 
 
+// ===== DASHBOARD =====
+
+// Show a number with commas, like 12,500.00
+function formatNumber(n) {
+  return n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// Add up the balances of all accounts of one type
+function getTypeTotal(type) {
+  var total = 0;
+  for (var i = 0; i < accounts.length; i++) {
+    if (accounts[i].type == type) {
+      total = total + getBalance(accounts[i].code, "all");
+    }
+  }
+  return Math.round(total * 100) / 100;
+}
+
+// Capital + net income - drawings
+function getOwnerEquity() {
+  var capital = 0;
+  var drawings = 0;
+  for (var i = 0; i < accounts.length; i++) {
+    if (accounts[i].type == "Equity") {
+      var balance = getBalance(accounts[i].code, "all");
+      if (accounts[i].name.toLowerCase().indexOf("drawing") != -1) {
+        drawings = drawings + balance;
+      } else {
+        capital = capital - balance;
+      }
+    }
+  }
+  return Math.round((capital + getNetIncome() - drawings) * 100) / 100;
+}
+
+// Make one summary card
+function makeCard(label, value, color, sub) {
+  var html = "<div class='card' style='border-top-color:" + color + "'>";
+  html += "<div class='cardlabel'>" + label + "</div>";
+  html += "<div class='cardvalue'>" + value + "</div>";
+  if (sub != "") {
+    html += "<div class='cardsub'>" + sub + "</div>";
+  }
+  html += "</div>";
+  return html;
+}
+
+// Make one bar. The bar width is the value compared to the biggest value.
+function makeBar(label, value, max, color) {
+  var width = 0;
+  if (max > 0 && value > 0) {
+    width = value / max * 100;
+  }
+  var html = "<div class='barrow'>";
+  html += "<span class='barlabel'>" + label + "</span>";
+  html += "<div class='bartrack'><div class='bar' style='width:" + width + "%; background-color:" + color + "'></div></div>";
+  html += "<span class='barvalue'>" + formatNumber(value) + "</span>";
+  html += "</div>";
+  return html;
+}
+
+function showDashboard() {
+  var assets = getTypeTotal("Asset");
+  var liabilities = -getTypeTotal("Liability");
+  var revenue = -getTypeTotal("Revenue");
+  var expenses = getTypeTotal("Expense");
+  var equity = getOwnerEquity();
+  var netIncome = getNetIncome();
+
+  // cash on hand
+  var cash = 0;
+  for (var i = 0; i < accounts.length; i++) {
+    if (isCashAccount(accounts[i])) {
+      cash = cash + getBalance(accounts[i].code, "all");
+    }
+  }
+
+  // count the entries
+  var transactionCount = 0;
+  var adjustmentCount = 0;
+  for (var j = 0; j < entries.length; j++) {
+    if (entries[j].kind == "adjustment") {
+      adjustmentCount++;
+    } else {
+      transactionCount++;
+    }
+  }
+
+  // summary cards
+  var netLabel = "Net Income";
+  var netColor = "#6FCF97";
+  if (netIncome < 0) {
+    netLabel = "Net Loss";
+    netColor = "#FF8A80";
+  }
+
+  var cards = "";
+  cards += makeCard("Total Assets", formatNumber(assets), "#5BC0BE", "");
+  cards += makeCard("Total Liabilities", formatNumber(liabilities), "#F4C26B", "");
+  cards += makeCard("Owner's Equity", formatNumber(equity), "#8E9BFF", "");
+  cards += makeCard(netLabel, formatNumber(Math.abs(netIncome)), netColor, "");
+  cards += makeCard("Cash on Hand", formatNumber(cash), "#5EC8F2", "");
+  cards += makeCard("Total Entries", entries.length, "#B8C4E4", transactionCount + " transactions, " + adjustmentCount + " adjustments");
+  document.getElementById("dashCards").innerHTML = cards;
+
+  // revenue vs expenses
+  var maxIncome = Math.max(revenue, expenses);
+  var incomeHtml = makeBar("Revenue", revenue, maxIncome, "#6FCF97");
+  incomeHtml += makeBar("Expenses", expenses, maxIncome, "#FF8A80");
+  incomeHtml += "<p class='barnote'>" + netLabel + ": " + formatNumber(Math.abs(netIncome)) + "</p>";
+  document.getElementById("dashIncome").innerHTML = incomeHtml;
+
+  // accounting equation
+  var maxEquation = Math.max(assets, liabilities, equity);
+  var equationHtml = makeBar("Assets", assets, maxEquation, "#5BC0BE");
+  equationHtml += makeBar("Liabilities", liabilities, maxEquation, "#F4C26B");
+  equationHtml += makeBar("Owner's Equity", equity, maxEquation, "#8E9BFF");
+  if (Math.round((assets - liabilities - equity) * 100) == 0) {
+    equationHtml += "<p class='status-ok'>Assets = Liabilities + Owner's Equity. Balanced.</p>";
+  } else {
+    equationHtml += "<p class='status-bad'>The accounting equation is NOT balanced.</p>";
+  }
+  document.getElementById("dashEquation").innerHTML = equationHtml;
+
+  // the last 5 entries (newest first)
+  var recent = "<tr><th>Date</th><th>Description</th><th>Debit</th><th>Credit</th><th>Amount</th><th>Type</th></tr>";
+  if (entries.length == 0) {
+    recent += "<tr><td colspan='6'>No entries yet.</td></tr>";
+  }
+  var shown = 0;
+  for (var r = entries.length - 1; r >= 0 && shown < 5; r--) {
+    var e = entries[r];
+    var typeName = "Transaction";
+    if (e.kind == "adjustment") {
+      typeName = "Adjustment";
+    }
+    recent += "<tr>";
+    recent += "<td>" + e.date + "</td>";
+    recent += "<td>" + e.desc + "</td>";
+    recent += "<td>" + getAccountName(e.debit) + "</td>";
+    recent += "<td>" + getAccountName(e.credit) + "</td>";
+    recent += "<td>" + formatNumber(e.amount) + "</td>";
+    recent += "<td>" + typeName + "</td>";
+    recent += "</tr>";
+    shown++;
+  }
+  document.getElementById("dashRecent").innerHTML = recent;
+}
+
 // Update everything on the screen
 function refresh() {
   fillDropdowns();
   showAccounts();
   showEntries();
+  showDashboard();
 }
 
 // When the page opens
 document.getElementById("tDate").value = new Date().toISOString().slice(0, 10);
 document.getElementById("aDate").value = new Date().toISOString().slice(0, 10);
-showPage("accounts");
+showPage("dashboard");
 loadData();

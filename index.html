@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Simple Accounting System</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
+<div class="layout">
+
+  <div class="sidebar">
 
   <h1>Accounting System</h1>
 
   <div class="menu">
+    <button class="menubtn" id="menu-dashboard" onclick="showPage('dashboard')">Dashboard</button>
     <button class="menubtn" id="menu-accounts" onclick="showPage('accounts')">Chart of Accounts</button>
     <button class="menubtn" id="menu-transactions" onclick="showPage('transactions')">Business Transactions</button>
     <button class="menubtn" id="menu-trial" onclick="showPage('trial')">Trial Balance</button>
@@ -19,6 +24,27 @@
     <button class="menubtn" id="menu-equity" onclick="showPage('equity')">Owner's Equity</button>
     <button class="menubtn" id="menu-position" onclick="showPage('position')">Statement of Financial Position</button>
     <button class="menubtn" id="menu-cashflow" onclick="showPage('cashflow')">Statement of Cash Flows</button>
+  </div>
+  </div>
+
+  <div class="main">
+
+  <!-- 0. DASHBOARD -->
+  <div id="dashboard" class="page">
+    <h2>Dashboard</h2>
+    <div id="dashCards" class="cards"></div>
+    <div class="panels">
+      <div class="panel">
+        <h3>Revenue vs Expenses</h3>
+        <div id="dashIncome"></div>
+      </div>
+      <div class="panel">
+        <h3>Accounting Equation</h3>
+        <div id="dashEquation"></div>
+      </div>
+    </div>
+    <h3>Recent Entries</h3>
+    <table id="dashRecent"></table>
   </div>
 
   <!-- 1. CHART OF ACCOUNTS -->
@@ -107,6 +133,7 @@
     <p id="cashMessage"></p>
   </div>
 
+</div>
 </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
