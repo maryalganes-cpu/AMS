@@ -13,7 +13,7 @@ body {
 }
 
 h1 {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: bold;
   margin: 0 0 18px 0;
 }
@@ -35,7 +35,7 @@ h3 {
 }
 
 .sidebar {
-  width: 240px;
+  width: 300px;
   flex-shrink: 0;
   background-color: #f3f3f3;
   border-right: 1px solid #d0d0d0;
@@ -49,8 +49,7 @@ h3 {
 .main {
   flex: 1;
   min-width: 0;
-  max-width: 1100px;
-  padding: 24px 32px 48px 32px;
+  padding: 28px 48px 48px 48px;
 }
 
 /* ===== Menu ===== */
@@ -67,7 +66,7 @@ h3 {
   border-radius: 0;
   padding: 8px 10px;
   margin: 0;
-  font-size: 14px;
+  font-size: 17px;
   font-weight: normal;
   text-align: left;
   cursor: pointer;
@@ -101,7 +100,7 @@ button {
   border-radius: 3px;
   padding: 6px 12px;
   margin: 3px 3px 3px 0;
-  font-size: 12px;
+  font-size: 14px;
   font-family: inherit;
   cursor: pointer;
 }
